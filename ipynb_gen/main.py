@@ -282,7 +282,8 @@ def cwl_slurm_array_gen(conf_args, lib_type, metadata_filename, pipeline_type, n
         'mem': consts.MEM[lib_type.lower()],
         'nthreads': consts.NTHREADS[lib_type.lower()],
         'pipeline_type': pipeline_type,
-        'consts': consts
+        'consts': consts,
+        'singularity': conf_args['singularity'],
     }
     contents = [render('templates/%s.j2' % func_name, context)]
 
@@ -294,8 +295,8 @@ def cwl_slurm_array_gen(conf_args, lib_type, metadata_filename, pipeline_type, n
                               description="Execute SLURM array master file",
                               depends_on=True,
                               array="0-%d%%20" % (n_samples - 1),
-                              prologue=["source %s %s" % (consts.CONDA_ACTIVATE,
-                                                          consts.CONDA_ENVIRONMENT)],
+                              prologue=[consts.LMOD_CWLTOOL_SINGULARITY if conf_args["singularity"] else
+                                        "source %s %s" % (consts.CONDA_ACTIVATE, consts.CONDA_ENVIRONMENT)],
                               partition=",".join(consts.SLURM_PARTITIONS))
     cells.extend(execute_cell.to_list())
 
@@ -599,7 +600,7 @@ def init_conf_args(args, required_args=None, optional_args=None):
         required_args = ['root_dir']
 
     if optional_args is None:
-        optional_args = ['user', 'sep', 'user_duke_email', 'project_name']
+        optional_args = consts.OPTIONAL_ARGS
 
     conf_args = {}
     if args['conf_file']:

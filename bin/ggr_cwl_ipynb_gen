@@ -29,6 +29,9 @@ if __name__ == '__main__':
                              '(semi-required: either defined here or in conf-file)')
     parser.add_argument('-v', '--version', required=False,
                         help='Print version of the program and exit')
+    parser.add_argument('-s', '--singularity', action='store_true', required=False,
+                        help='Use Singularity to run the workflows with cwltool (by default, the --no-container '
+                             'argument is used and all software has to be made available at runtime')
 
     args = parser.parse_args()
     run(args)

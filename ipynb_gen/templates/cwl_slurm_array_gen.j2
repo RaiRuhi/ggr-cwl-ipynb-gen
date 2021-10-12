@@ -7,6 +7,27 @@
 {% endif %}#SBATCH --mem={{ mem }}
 #SBATCH --cpus-per-task={{ nthreads }}
 
+{% if singularity %}
+export SINGULARITY_CACHEDIR=/data/reddylab/software/cwl/singularity
+export SINGULARITY_TMPDIR=/tmp
+export CWL_SINGULARITY_CACHE=${SINGULARITY_CACHEDIR}
+
+# Make sure temporary files and folders are created in a specific folder
+mkdir -p {{ root_dir }}/processing/{{ lib_type }}/tmpdirs/tmp-{{ project_name }}-{{ pipeline_type }}-${SLURM_ARRAY_TASK_ID}-
+export TMPDIR="{{ root_dir }}/processing/{{ lib_type }}/tmpdirs/tmp-{{ project_name }}-{{ pipeline_type }}-${SLURM_ARRAY_TASK_ID}-"
+
+cwltool --debug \
+    --non-strict \
+    --singularity \
+    --disable-color \
+    --cidfile-dir ${SINGULARITY_CACHEDIR} \
+    --tmpdir-prefix ${TMPDIR} \
+    --tmp-outdir-prefix ${TMPDIR} \
+    --outdir {{ root_dir }}/processing/{{ lib_type }}/{{ project_name }}-{{ pipeline_type }}  \
+    /data/reddylab/software/cwl/GGR-cwl/v1.0/{% if lib_type == 'chip_seq' %}ChIP-seq{% elif lib_type=='rna_seq' %}RNA-seq{% elif lib_type=='atac_seq' %}ATAC-seq{% elif lib_type=='starr_seq' %}STARR-seq{% endif %}_pipeline/pipeline-{{ pipeline_type }}.cwl \
+    {{ root_dir }}/processing/{{ lib_type }}/jsons/{{ metadata_basename }}-{{ pipeline_type }}-${SLURM_ARRAY_TASK_ID}.json
+
+{% else %}
 export PATH="/data/reddylab/software/bin:$PATH"
 export PATH="/data/common/shared_conda_envs/ucsc/bin:$PATH"
 export PATH="/data/reddylab/software/cwl/bin:$PATH"
@@ -40,6 +61,7 @@ cwltool --debug \
     --no-container \
     /data/reddylab/software/cwl/GGR-cwl/v1.0/{% if lib_type == 'chip_seq' %}ChIP-seq{% elif lib_type=='rna_seq' %}RNA-seq{% elif lib_type=='atac_seq' %}ATAC-seq{% elif lib_type=='starr_seq' %}STARR-seq{% endif %}_pipeline/pipeline-{{ pipeline_type }}.cwl \
     {{ root_dir }}/processing/{{ lib_type }}/jsons/{{ metadata_basename }}-{{ pipeline_type }}-${SLURM_ARRAY_TASK_ID}.json
+{% endif %}
 
 # Delete any tmpdir not removed by cwltool
 rm -rf {{ root_dir }}/processing/{{ lib_type }}/tmpdirs/tmp-{{ project_name }}-{{ pipeline_type }}-${SLURM_ARRAY_TASK_ID}-

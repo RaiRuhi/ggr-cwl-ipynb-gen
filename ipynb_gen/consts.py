@@ -53,6 +53,8 @@ PLOT_SCRIPT = '/data/reddylab/Darryl/GitHub/reddylab/countFactors_metadata.sh'  
 QC_SCRIPT_DIR = '/data/reddylab/software/cwl/bin'
 DATA_UPLOAD_SCRIPT = '/data/reddylab/Darryl/GitHub/reddylab/csv_to_mongo.py'
 HOST_FOR_TUNNELED_DOWNLOAD = "Hardac-xfer.genome.duke.edu"
+LMOD_CWLTOOL_SINGULARITY= "module load cwltool/1.0.20191022103248-gcb01"
+OPTIONAL_ARGS = ['user', 'sep', 'user_duke_email', 'project_name', 'singularity']
 
 # Package constants
 PACKAGE_NAME = "ipynb_gen"
