@@ -43,10 +43,13 @@ STRANDNESSES = ['unstranded', 'stranded', 'revstranded']
 BLACKLIST_REMOVAL = [None, 'blacklist-removal']
 WITH_SJDB = True
 WITH_UMIS = [None, 'umis']
-SLURM_PARTITIONS = ["all"]
+SLURM_PARTITIONS = ["execute"]
+#SLURM_PARTITIONS = ["all"]
 
 # Environment configuration
-CONDA_ACTIVATE = '/data/reddylab/software/miniconda2/bin/activate'
+SOURCE_CONDA = '/sched/anaconda3/etc/profile.d/conda.sh
+#CONDA_ACTIVATE = '/data/reddylab/software/miniconda2/bin/activate'
+CONDA_ACTIVATE = '/data/reddylab/software/miniconda3/envs/alex_py3_dev'
 CONTAMINATION_SCRIPT = '/data/reddylab/Darryl/GitHub/reddylab/contamination_check'  # not used
 CONDA_ENVIRONMENT = 'cwl10'
 PLOT_SCRIPT = '/data/reddylab/Darryl/GitHub/reddylab/countFactors_metadata.sh'  # not used
