@@ -255,8 +255,8 @@ def cwl_json_gen(conf_args, lib_type, metadata_filename):
                               description="Execute file to create JSON files",
                               depends_on=True,
                               partition=",".join(consts.SLURM_PARTITIONS),
-                              prologue=["source %s %s" % (consts.CONDA_ACTIVATE,
-                                                          consts.CONDA_ENVIRONMENT)],
+                              prologue=["source %s %s" % (consts.SOURCE_CONDA),
+                                        "conda activate %s %s" % (consts.CONDA_ACTIVATE)],
                               script_output="%s/%s_%s.out" % (logs_dir,
                                                               conf_args['project_name'],
                                                               inspect.stack()[0][3]))
@@ -296,7 +296,8 @@ def cwl_slurm_array_gen(conf_args, lib_type, metadata_filename, pipeline_type, n
                               depends_on=True,
                               array="0-%d%%20" % (n_samples - 1),
                               prologue=[consts.LMOD_CWLTOOL_SINGULARITY if conf_args["singularity"] else
-                                        "source %s %s" % (consts.CONDA_ACTIVATE, consts.CONDA_ENVIRONMENT)],
+                                        "source %s %s" % (consts.SOURCE_CONDA),
+                                        "conda activate %s %s" % (consts.CONDA_ACTIVATE)],
                               partition=",".join(consts.SLURM_PARTITIONS))
     cells.extend(execute_cell.to_list())
 
@@ -324,6 +325,7 @@ def generate_qc_cell(conf_args, lib_type, pipeline_type):
     qc_type = lib_type.replace("_", "")
     context = {
         'output_fn': output_fn,
+        "source_conda": consts.SOURCE_CONDA,
         "conda_activate": consts.CONDA_ACTIVATE,
         'root_dir': conf_args["root_dir"],
         "library_type": lib_type,
@@ -392,7 +394,8 @@ def generate_plots(conf_args, metadata_file, lib_type, pipeline_type, n_samples)
     execute_cell = CellSbatch(contents=[output_fn],
                               depends_on=True,
                               array="0-%d%%5" % (n_samples - 1),
-                              prologue=["source %s %s" % (consts.CONDA_ACTIVATE, consts.CONDA_ENVIRONMENT)],
+                              prologue=["source %s %s" % (consts.SOURCE_CONDA),
+                                        "conda activate %s %s" % (consts.CONDA_ACTIVATE)],
                               partition=",".join(consts.SLURM_PARTITIONS),
                               description="Generate plots and data for website")
     cells.extend(execute_cell.to_list())
@@ -429,6 +432,7 @@ def data_upload(conf_args, lib_type, pipeline_type):
         'library_type': lib_type,
         'project_name': conf_args['project_name'],
         'script_dir': consts.DATA_UPLOAD_SCRIPT,
+        'source_conda': consts.SOURCE_CONDA,
         'conda_activate': consts.CONDA_ACTIVATE,
         'data_dir': data_dir,
         'uri': conf_args['uri'] if 'uri' in conf_args else None,
@@ -442,7 +446,8 @@ def data_upload(conf_args, lib_type, pipeline_type):
 
     execute_cell = CellSbatch(contents=[output_fn],
                               depends_on=True,
-                              prologue=["source %s alex" % consts.CONDA_ACTIVATE],
+                              prologue=["source %s %s" % (consts.SOURCE_CONDA),
+                                        "conda activate %s %s" % (consts.CONDA_ACTIVATE)],
                               partition=",".join(consts.SLURM_PARTITIONS),
                               description="### Upload ChIP-seq to web-application")
     cells.extend(execute_cell.to_list())
