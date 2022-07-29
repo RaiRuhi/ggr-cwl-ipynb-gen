@@ -47,7 +47,7 @@ SLURM_PARTITIONS = ["execute"]
 #SLURM_PARTITIONS = ["all"]
 
 # Environment configuration
-SOURCE_CONDA = '/sched/anaconda3/etc/profile.d/conda.sh
+SOURCE_CONDA = '/sched/anaconda3/etc/profile.d/conda.sh'
 #CONDA_ACTIVATE = '/data/reddylab/software/miniconda2/bin/activate'
 CONDA_ACTIVATE = '/data/reddylab/software/miniconda3/envs/alex_py3_dev'
 CONTAMINATION_SCRIPT = '/data/reddylab/Darryl/GitHub/reddylab/contamination_check'  # not used
